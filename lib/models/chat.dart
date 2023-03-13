@@ -1,12 +1,29 @@
-import 'package:flutter_firebase_chat/models/message.dart';
-import 'package:flutter_firebase_chat/models/user.dart';
+import 'package:flutter_firebase_chat/models/chat_message.dart';
+import 'package:flutter_firebase_chat/models/chat_user.dart';
 
 class Chat {
-  final List<User> users;
+  final List<ChatUser> users;
   final String id;
-  final List<Message> messages;
+  final List<ChatMessage> messages;
 
-  String get chatName => users.firstWhere((user) => !user.local).name;
+  Chat({required this.users, required this.id, required this.messages});
 
-  Chat(this.users, this.id, this.messages);
+  factory Chat.fromJson(Map<String, dynamic> json) {
+    return Chat(
+        id: json["id"] ?? "",
+        users: json["users"] == null
+            ? <ChatUser>[]
+            : List<ChatUser>.from(
+                json["users"].map((e) => ChatUser.fromJson(e))),
+        messages: json["messages"] == null
+            ? <ChatMessage>[]
+            : List<ChatMessage>.from(
+                json["messages"].map((e) => ChatMessage.fromJson(e))));
+  }
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "users": List<dynamic>.from(users.map((e) => e.toJson())),
+        "messages": List<dynamic>.from(messages.map((e) => e.toJson()))
+      };
 }
